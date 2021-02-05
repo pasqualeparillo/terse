@@ -7,7 +7,7 @@ import { regexp } from "../helpers/emailRegex";
 
 export default function LinkForm() {
   const [link, setLink] = useState({ url: "", short_url: "" });
-  const { register, errors, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const mutateUrl = useMutation(addUrl, {
     onSuccess: (data, variables, context) => {

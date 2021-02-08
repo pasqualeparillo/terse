@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMutation } from "react-query";
 import { addUrl } from "../helpers/URI";
 import { regexp } from "../helpers/emailRegex";
+import Results from "../results/results";
 
 export default function LinkForm() {
   const [link, setLink] = useState({ url: "", short_url: "" });
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     status: false,
     message: "",
@@ -27,6 +29,13 @@ export default function LinkForm() {
     },
     onError: (error, variables, context) => {
       setMessageValue();
+      setLoading(false);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
   function setMessageValue(
@@ -38,10 +47,12 @@ export default function LinkForm() {
     });
     setTimeout(() => setMessage({ status: false, message: "" }), 5000);
   }
+
   function onSubmit(url_input) {
     let url = url_input.url;
     mutateUrl.mutate(url);
   }
+
   function onError(errors, e) {
     if (errors.url.type === "checkLength") {
       setMessageValue("Looks like you didn't enter anything");
@@ -81,7 +92,11 @@ export default function LinkForm() {
         </form>
       </div>
       <div className="flex flex-1 self-center w-full h-full relative justify-center z-40">
-        <Results link={link} setMessageValue={setMessageValue} />
+        <Results
+          link={link}
+          setMessageValue={setMessageValue}
+          loading={loading}
+        />
       </div>
       <div className="fixed right-0 bottom-0 h-screen lg:w-1/4 md:w-1/4 w-full flex justify-end items-end z-10">
         <AnimatePresence exitBeforeEnter>
@@ -99,55 +114,5 @@ export default function LinkForm() {
         </AnimatePresence>
       </div>
     </React.Fragment>
-  );
-}
-
-function Results({ link, setMessageValue }) {
-  const copyToClipboard = () => {
-    let data = "http://127.0.0.1:8000/url/" + link.short_url;
-    const ta = document.createElement("textarea");
-    ta.innerText = data;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    setMessageValue("Copied!");
-  };
-  return (
-    <div className="-mt-8 flex border-black lg:w-1/2 md:w-3/4  w-11/12 overflow-hidden justify-start h-24 relative">
-      <div className="pt-8 flex flex-1 bg-black rounded-b-xl pl-6 pr-24 relative max-w-full">
-        <AnimatePresence exitBeforeEnter>
-          <motion.div
-            className="flex flex-1 justify-between items-center w-full flex-wrap truncate"
-            animate={{ y: 0 }}
-            initial={{ y: -50 }}
-            exit={{ y: 50 }}
-            key={link.url}
-          >
-            <p className="text-white font-bold text-xs lg:w-1/2 w-full truncate flex lg:justify-start justify-start">
-              {link.url}
-            </p>
-            <div className="flex flex-1 lg:justify-end justify-start">
-              <a
-                className="text-yellow-200 font-bold text-xs truncate"
-                href={link.short_url}
-              >
-                {link.short_url}
-              </a>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-      <motion.button
-        className="flex absolute right-0 top-0 bottom-0 justify-center items-center px-4 mx-2 mb-2 mt-10 rounded-xl bg-white font-bold focus:outline-none"
-        onClick={() => copyToClipboard()}
-        type="submit"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        initial={{ scale: 1 }}
-      >
-        Copy
-      </motion.button>
-    </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-export default function Loader() {
+export default function Loader({ loading }) {
   const parent = {
     first: {
       opacity: 0,
@@ -28,10 +28,12 @@ export default function Loader() {
   };
   return (
     <motion.div
-      className="flex"
+      className="flex w-full h-full self-center justify-start items-center"
       variants={parent}
       initial="first"
       animate="second"
+      exit={{ opacity: 0 }}
+      key={loading}
     >
       <motion.span
         className="w-8 h-8 rounded-full bg-red-500 border-2 border-black z-10"

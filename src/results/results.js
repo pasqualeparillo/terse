@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Loader from "../utils/loader";
 export default function Results({ link, setMessageValue, loading }) {
   const copyToClipboard = () => {
-    let data = "http://127.0.0.1:8000/url/" + link.short_url;
+    let data = process.env.REACT_APP_ENDPOINT + link.short_url;
     const ta = document.createElement("textarea");
     ta.innerText = data;
     document.body.appendChild(ta);
@@ -11,6 +11,7 @@ export default function Results({ link, setMessageValue, loading }) {
     document.execCommand("copy");
     ta.remove();
     setMessageValue("Copied!");
+    console.log(process.env.REACT_APP_ENDPOINT);
   };
   return (
     <div className="-mt-8 flex border-black lg:w-1/2 md:w-3/4  w-11/12 overflow-hidden justify-start h-24 relative">

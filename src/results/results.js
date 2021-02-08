@@ -11,7 +11,6 @@ export default function Results({ link, setMessageValue, loading }) {
     document.execCommand("copy");
     ta.remove();
     setMessageValue("Copied!");
-    console.log(process.env.REACT_APP_ENDPOINT);
   };
   return (
     <div className="-mt-8 flex border-black lg:w-1/2 md:w-3/4  w-11/12 overflow-hidden justify-start h-24 relative">

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Loader from "../utils/loader";
 export default function Results({ link, setMessageValue, loading }) {
   const copyToClipboard = () => {
-    let data = process.env.REACT_APP_ENDPOINT + link.short_url;
+    let data = link.short_url;
     const ta = document.createElement("textarea");
     ta.innerText = data;
     document.body.appendChild(ta);

@@ -17,7 +17,7 @@ export default function Results({ loading }) {
     ta.remove();
     setMessage("Copied!");
   };
-  if (loading) return <Loader />;
+  if (loading) return <Loader clipBoard={copyToClipboard} />;
   return (
     <div className="-mt-8 flex border-black lg:w-1/2 md:w-3/4  w-11/12 overflow-hidden justify-start h-24 relative">
       <div className="pt-8 flex flex-1 bg-black rounded-b-xl pl-6 pr-24 relative max-w-full ">

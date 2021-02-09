@@ -1,6 +1,6 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-export default function Loader({ loading }) {
+export default function Loader({ loading, clipBoard }) {
   const parent = {
     first: {
       opacity: 0,
@@ -58,7 +58,7 @@ export default function Loader({ loading }) {
       </div>
       <motion.button
         className="flex absolute right-0 top-0 bottom-0 justify-center items-center px-4 mx-2 mb-2 mt-10 rounded-xl bg-white font-bold focus:outline-none"
-        onClick={() => copyToClipboard()}
+        onClick={() => clipBoard()}
         type="submit"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}

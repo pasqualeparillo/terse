@@ -1,5 +1,5 @@
 [[redirects]]
 from = "/*"
-to = "http://127.0.0.1:8000/url/:splat"
+to = "https://shortenurl-backend.herokuapp.com/url/:splat"
 status = 301
 force = false

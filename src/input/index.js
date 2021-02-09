@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMutation } from "react-query";
-import { addUrl } from "../helpers/URI";
-import { regexp } from "../helpers/emailRegex";
+import { addUrl } from "../utils/fetch";
+import { regexp } from "../utils/emailRegex";
 import Results from "../results/results";
-
+import { useRecoilState } from "recoil";
+import { linkState, messageState } from "../utils/state";
 export default function LinkForm() {
-  const [link, setLink] = useState({ url: "", short_url: "" });
+  const [link, setLink] = useRecoilState(linkState);
+  const [message, setMessage] = useRecoilState(messageState);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({
-    status: false,
-    message: "",
-  });
+
   const { register, handleSubmit } = useForm({
     defaultValues: {
       url: "https://www.",
@@ -20,14 +19,29 @@ export default function LinkForm() {
     reValidateMode: "onSubmit",
   });
 
+  function onFormSubmit(url_input) {
+    let url = url_input.url;
+    mutateUrl.mutate(url);
+  }
+
+  function onFormError(errors, e) {
+    if (errors.url.type === "checkLength") {
+      setMessageValue("Looks like you didn't enter anything");
+    }
+    if (errors.url.type === "checkPattern") {
+      setMessageValue("Looks like you didn't enter a url");
+    }
+  }
+
   const mutateUrl = useMutation(addUrl, {
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data) => {
       setLink({
         url: data.data.full_url,
         short_url: `Terse.dev/${data.data.url_hash}`,
       });
+      setLoading(false);
     },
-    onError: (error, variables, context) => {
+    onError: () => {
       setMessageValue();
       setLoading(false);
     },
@@ -38,6 +52,7 @@ export default function LinkForm() {
       setLoading(false);
     },
   });
+
   function setMessageValue(
     value = "hmmmmm something went wrong, please try again"
   ) {
@@ -48,25 +63,12 @@ export default function LinkForm() {
     setTimeout(() => setMessage({ status: false, message: "" }), 5000);
   }
 
-  function onSubmit(url_input) {
-    let url = url_input.url;
-    mutateUrl.mutate(url);
-  }
-
-  function onError(errors, e) {
-    if (errors.url.type === "checkLength") {
-      setMessageValue("Looks like you didn't enter anything");
-    }
-    if (errors.url.type === "checkPattern") {
-      setMessageValue("Looks like you didn't enter a url");
-    }
-  }
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center self-center lg:w-1/2 md:w-3/4 w-11/12 mt-12 relative">
         <form
           className="w-full relative z-50"
-          onSubmit={handleSubmit(onSubmit, onError)}
+          onSubmit={handleSubmit(onFormSubmit, onFormError)}
         >
           <input
             className="w-full py-4 px-6 rounded-xl border-2 border-black z-50 overflow-hidden focus:outline-none font-bold"
@@ -92,11 +94,7 @@ export default function LinkForm() {
         </form>
       </div>
       <div className="flex flex-1 self-center w-full h-full relative justify-center z-40">
-        <Results
-          link={link}
-          setMessageValue={setMessageValue}
-          loading={loading}
-        />
+        <Results link={link} loading={loading} />
       </div>
       <div className="fixed right-0 bottom-0 h-screen lg:w-1/4 md:w-1/4 w-full flex justify-end items-end z-10">
         <AnimatePresence exitBeforeEnter>

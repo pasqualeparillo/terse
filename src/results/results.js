@@ -5,7 +5,7 @@ import { linkState, messageState } from "../utils/state";
 import { useRecoilState } from "recoil";
 
 export default function Results({ loading }) {
-  const [setMessage] = useRecoilState(messageState);
+  const [message, setMessage] = useRecoilState(messageState);
   const [link] = useRecoilState(linkState);
   const copyToClipboard = () => {
     let data = link.short_url;
@@ -15,7 +15,10 @@ export default function Results({ loading }) {
     ta.select();
     document.execCommand("copy");
     ta.remove();
-    setMessage("Copied!");
+    setMessage({
+      status: true,
+      message: "Copied",
+    });
   };
   if (loading) return <Loader clipBoard={copyToClipboard} />;
   return (

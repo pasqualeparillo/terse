@@ -5,6 +5,7 @@ import { linkState, messageState } from "../utils/state";
 import { useRecoilState } from "recoil";
 
 export default function Results({ loading }) {
+  // eslint-disable-next-line
   const [message, setMessage] = useRecoilState(messageState);
   const [link] = useRecoilState(linkState);
   const copyToClipboard = () => {
@@ -19,6 +20,7 @@ export default function Results({ loading }) {
       status: true,
       message: "Copied",
     });
+    setTimeout(() => setMessage({ status: false, message: "" }), 5000);
   };
   if (loading) return <Loader clipBoard={copyToClipboard} />;
   return (
